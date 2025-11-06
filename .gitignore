@@ -1,0 +1,7 @@
+# Python Virtual Environments
+venv/
+.venv/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
