@@ -52,7 +52,7 @@ Install all required packages using:pip install -r requirements.txt
 1.Create a MySQL database named:flipkart_support
 
 2.Configure your .env file in the backend directory:
-DATABASE_URL=mysql+pymysql://root:Pavan7013@localhost:3306/support_tickets'
+DATABASE_URL=mysql+pymysql://root:Password@localhost:3306/support_tickets'
 FLASK_ENV=development
 SECRET_KEY=your_secret_key
 
