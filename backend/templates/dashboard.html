@@ -307,12 +307,12 @@
 
         /* Buttons */
         .btn-primary-custom {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
             border: none;
             padding: 0.75rem 1.5rem;
             border-radius: 12px;
             font-weight: 600;
-            color: white;
+            color: #ffffff !important;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
             text-decoration: none;
@@ -324,7 +324,7 @@
         .btn-primary-custom:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-            color: white;
+            color: #ffffff !important;
         }
 
         .btn-outline-custom {
@@ -345,6 +345,28 @@
             background: var(--primary-color);
             color: white;
             transform: translateY(-2px);
+        }
+
+        .btn-danger-custom {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #ffffff !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-danger-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+            color: #ffffff !important;
         }
 
         /* Filter Tabs */
@@ -551,15 +573,33 @@
                         <a href="/create_ticket" class="btn-primary-custom">
                             <i class="fas fa-plus"></i> New Ticket
                         </a>
+                        <a href="/logout" class="btn btn-outline-danger rounded-pill px-3">
+                            <i class="fas fa-sign-out-alt me-1"></i> Logout
+                        </a>
                         <div class="dropdown">
-                            <button class="btn btn-light rounded-pill dropdown-toggle" data-bs-toggle="dropdown">
+                            <button class="btn btn-light rounded-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-cog"></i>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 180px;">
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center py-2" href="#">
+                                        <i class="fas fa-user me-3" style="width: 16px;"></i>
+                                        <span>Profile</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center py-2" href="#">
+                                        <i class="fas fa-cog me-3" style="width: 16px;"></i>
+                                        <span>Settings</span>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider my-2"></li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center py-2 text-danger" href="/logout">
+                                        <i class="fas fa-sign-out-alt me-3" style="width: 16px;"></i>
+                                        <span>Logout</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -691,31 +731,6 @@
 
                 <!-- Right Column - Quick Actions & Activity -->
                 <div class="right-column">
-                    <!-- Quick Actions -->
-                    <div class="quick-actions">
-                        <div class="action-card animate-in" data-aos="fade-left" data-aos-delay="100">
-                            <div class="action-icon">
-                                <i class="fas fa-plus"></i>
-                            </div>
-                            <h5 class="action-title">Create New Ticket</h5>
-                            <p class="action-description">Need help? Create a new support ticket and we'll assist you.</p>
-                            <a href="/create_ticket" class="btn-primary-custom w-100">
-                                <i class="fas fa-plus me-2"></i>Create Ticket
-                            </a>
-                        </div>
-
-                        <div class="action-card animate-in" data-aos="fade-left" data-aos-delay="200">
-                            <div class="action-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <h5 class="action-title">Knowledge Base</h5>
-                            <p class="action-description">Find answers to common questions in our knowledge base.</p>
-                            <a href="#" class="btn-outline-custom w-100">
-                                <i class="fas fa-book me-2"></i>Browse Articles
-                            </a>
-                        </div>
-                    </div>
-
                     <!-- Recent Activity -->
                     <div class="activity-list animate-in" data-aos="fade-left" data-aos-delay="300">
                         <h5 class="section-title mb-3">Recent Activity</h5>
@@ -741,19 +756,7 @@
                         {% endif %}
                     </div>
 
-                    <!-- Support Tips -->
-                    <div class="action-card animate-in mt-3" data-aos="fade-left" data-aos-delay="400">
-                        <div class="action-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
-                            <i class="fas fa-lightbulb"></i>
-                        </div>
-                        <h5 class="action-title">Support Tips</h5>
-                        <ul class="list-unstyled small text-start">
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Provide detailed descriptions</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Attach screenshots when possible</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Include error messages</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Our average response: under 2 hours</li>
-                        </ul>
-                    </div>
+
                 </div>
             </div>
         </div>

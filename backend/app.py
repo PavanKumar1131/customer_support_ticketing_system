@@ -16,9 +16,9 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 CORS(app)
 
-# MySQL Database configuration - UPDATE WITH YOUR CREDENTIALS
+# MySQL Database configuration
 app.config['SECRET_KEY'] = 'supersecretkey123'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Pavan7013@localhost:3306/support_tickets'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Pavan0987@localhost:3306/support_tickets'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
@@ -85,7 +85,7 @@ def login():
         print(f"=== LOGIN ATTEMPT ===")
         print(f"Email: '{email}'")
         
-        # Simple hardcoded test (temporary)
+        # Admin login check
         if email == 'admin@flipkart.com' and password == 'admin123':
             # Find or create admin user
             user = User.query.filter_by(email='admin@flipkart.com').first()
@@ -103,8 +103,26 @@ def login():
             flash('Login successful!', 'success')
             return redirect(url_for('admin_dashboard'))
         
+        # Regular user login check
+        elif email == 'user@flipkart.com' and password == 'user123':
+            # Find or create regular user
+            user = User.query.filter_by(email='user@flipkart.com').first()
+            if not user:
+                user = User(
+                    email='user@flipkart.com',
+                    password=generate_password_hash('user123'),
+                    name='Regular User',
+                    is_admin=False
+                )
+                db.session.add(user)
+                db.session.commit()
+            
+            login_user(user)
+            flash('Login successful!', 'success')
+            return redirect(url_for('dashboard'))
+        
         else:
-            # Try database lookup
+            # Try database lookup for other users
             user = User.query.filter_by(email=email).first()
             if user and check_password_hash(user.password, password):
                 login_user(user)
@@ -166,6 +184,40 @@ def admin_dashboard():
     
     tickets = Ticket.query.all()
     return render_template('admin_dashboard.html', tickets=tickets)
+
+@app.route('/admin/users')
+@login_required
+def admin_users():
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('dashboard'))
+    
+    users = User.query.all()
+    return render_template('admin_users.html', users=users)
+
+@app.route('/api/admin/users')
+@login_required
+def api_admin_users():
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Admin access required'}), 403
+    
+    try:
+        users = User.query.all()
+        users_data = [{
+            'id': user.id,
+            'name': user.name,
+            'email': user.email,
+            'is_admin': user.is_admin,
+            'tickets_count': len(user.tickets),
+            'created_at': user.created_at.strftime('%Y-%m-%d %H:%M')
+        } for user in users]
+        
+        return jsonify({
+            'success': True,
+            'users': users_data
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/create_ticket', methods=['GET', 'POST'])
 @login_required
@@ -547,13 +599,89 @@ def admin_stats():
         resolved_tickets = Ticket.query.filter_by(status='Resolved').count()
         
         return jsonify({
-            'total_tickets': total_tickets,
-            'open_tickets': open_tickets,
-            'in_progress_tickets': in_progress_tickets,
-            'resolved_tickets': resolved_tickets
+            'success': True,
+            'stats': {
+                'totalTickets': total_tickets,
+                'openTickets': open_tickets,
+                'resolvedToday': resolved_tickets,
+                'activeUsers': User.query.count()
+            }
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/stats/live')
+@login_required
+def admin_stats_live():
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Admin access required'}), 403
+    
+    try:
+        total_tickets = Ticket.query.count()
+        open_tickets = Ticket.query.filter_by(status='Open').count()
+        resolved_today = Ticket.query.filter(
+            Ticket.status == 'Resolved',
+            Ticket.created_at >= datetime.utcnow().date()
+        ).count()
+        active_users = User.query.count()
+        
+        return jsonify({
+            'success': True,
+            'stats': {
+                'totalTickets': total_tickets,
+                'openTickets': open_tickets,
+                'resolvedToday': resolved_today,
+                'activeUsers': active_users
+            }
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/tickets/<int:ticket_id>')
+@login_required
+def get_ticket(ticket_id):
+    try:
+        ticket = Ticket.query.get_or_404(ticket_id)
+        
+        # Check authorization
+        if not current_user.is_admin and ticket.user_id != current_user.id:
+            return jsonify({'success': False, 'error': 'Unauthorized'}), 403
+        
+        return jsonify({
+            'success': True,
+            'ticket': {
+                'id': ticket.id,
+                'subject': ticket.subject,
+                'description': ticket.description,
+                'priority': ticket.priority,
+                'category': ticket.category,
+                'status': ticket.status,
+                'created_at': ticket.created_at.isoformat(),
+                'user_name': ticket.user.name if ticket.user else 'N/A',
+                'user_email': ticket.user.email if ticket.user else 'N/A'
+            }
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/tickets/<int:ticket_id>', methods=['DELETE'])
+@login_required
+def delete_ticket(ticket_id):
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Admin access required'}), 403
+    
+    try:
+        ticket = Ticket.query.get_or_404(ticket_id)
+        db.session.delete(ticket)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Ticket deleted successfully'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/routes')
 def show_routes():

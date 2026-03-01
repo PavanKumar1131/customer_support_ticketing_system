@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>User Management - HelpDeskPro Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --muted-color: #64748b;
+            --light-color: #f8fafc;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, rgba(102,126,234,0.06) 0%, rgba(118,75,162,0.04) 100%);
+            color: var(--dark-color);
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: #fff;
+            height: 100vh;
+            position: fixed;
+            width: 280px;
+            box-shadow: 0 8px 30px rgba(102,126,234,0.12);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-brand h4 { font-weight: 700; }
+        .sidebar-brand small { opacity: 0.9; }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+            flex: 1;
+        }
+
+        .nav-item { margin: 0.5rem 1rem; }
+        .nav-link {
+            color: rgba(255,255,255,0.9);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            transition: all .18s ease;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            text-decoration: none;
+        }
+        .nav-link i { width: 20px; text-align: center; }
+        .nav-link:hover { background: rgba(255,255,255,0.06); transform: translateX(6px); }
+        .nav-link.active { background: rgba(255,255,255,0.08); }
+
+        .main-content { margin-left: 280px; padding: 2rem; min-height: 100vh; }
+
+        .navbar-custom {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(16,24,40,0.06);
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            padding: .6rem 1rem;
+        }
+
+        .card-custom {
+            background: #fff;
+            border-radius: 12px;
+            border: none;
+            box-shadow: var(--card-shadow);
+        }
+
+        .card-header-custom {
+            background: transparent;
+            border-bottom: 1px solid #eef2ff;
+            padding: 1rem 1.25rem;
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        .table-custom { margin-bottom: 0; }
+        .table-custom th {
+            border-top: none;
+            font-weight: 700;
+            background: rgba(102,126,234,0.03);
+        }
+        .table-custom td { vertical-align: middle; padding: .9rem .75rem; }
+
+        .badge-admin { background: #dbeafe; color: #1d4ed8; }
+        .badge-user { background: #f3f4f6; color: #374151; }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: #fff;
+            border: none;
+            padding: .5rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { position: relative; width: 100%; height: auto; }
+            .main-content { margin-left: 0; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <h4 class="mb-0">
+                <i class="fas fa-headset me-2"></i>HelpDeskPro
+            </h4>
+            <small class="text-white-50">Admin Panel</small>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-item">
+                <a href="/admin/dashboard" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/dashboard#ticketsSection" class="nav-link">
+                    <i class="fas fa-ticket-alt"></i>
+                    All Tickets
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/users" class="nav-link active">
+                    <i class="fas fa-users"></i>
+                    Users
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/dashboard#chartsSection" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    Analytics
+                </a>
+            </div>
+            <div class="nav-item mt-4">
+                <a href="/logout" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center">
+                    <h4 class="mb-0">User Management</h4>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-muted">Welcome, {{ current_user.name }}</span>
+                    <a href="/logout" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Users Table -->
+        <div class="card card-custom">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">All Users</h5>
+                <span class="text-muted">Total: {{ users|length }} users</span>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Tickets</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar me-2">
+                                            {{ user.name[0]|upper }}
+                                        </div>
+                                        <div class="fw-medium">{{ user.name }}</div>
+                                    </div>
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    {% if user.is_admin %}
+                                        <span class="badge badge-admin">Admin</span>
+                                    {% else %}
+                                        <span class="badge badge-user">User</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.tickets|length }}</td>
+                                <td>{{ user.created_at.strftime('%b %d, %Y') }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <i class="fas fa-users fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No users found</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
